@@ -1,7 +1,7 @@
 from random import choice, random, randint
 import sys
+import weightedlist
 
-#starting from the overall mannequin, as it were; invoking this should spit out a generated NPC
 def statblock():
 	if isMasked:
 		print 'Race:   ' + race + ' (Masked)'
@@ -9,7 +9,7 @@ def statblock():
 		print 'Race:   ' + race
 	print 'Sex:    ' + gender.title()
 	print 'Age:    ' + age.title()
-	print 'Job:    ' + job
+	print 'Job:    ' + job.title()
 	print 'Looks:  ' + appearance
 	print 'Wants:  to ' + instinct
 	print 'Using:  ' + knack
@@ -27,29 +27,14 @@ def narrative():
 	return ''
 
 def pickrace():
-	n = randint(1, 100)
-	if n == 100:
-		isMasked = 1
-		n = randint(1, 99)
-	else:
-		isMasked = 0
-	if n >= 1 and n <= 25:
-		raceResult = 'Elvarin'
-	elif n >= 26 and n <= 40:
-		raceResult = 'Huma'
-	elif n >= 41 and n <= 55:
-		raceResult = 'Dwarro'
-	elif n >= 56 and n <= 65:
-		raceResult = 'Thanae'
-	elif n >= 66 and n <= 75:
-		raceResult = 'Surrel'
-	elif n >= 76 and n <= 85:
-		raceResult = 'Kyhrro'
-	elif n >= 86 and n <= 95:
-		raceResult = 'Talar'
-	elif n >= 96 and n <= 99:
-		raceResult = 'Zomai'
-	return(raceResult,isMasked)
+        raceList = [(20, 'Elvarin'),(15, 'Huma'),(10, 'Dwarro'),(10, 'Thanae'),(10, 'Surrel'),(10, 'Kyhrro'),(10, 'Talar'),(5, 'Zomai'),(1, 'Masked')]
+        raceResult = weightedlist.pick(raceList)
+        if raceResult == 'Masked':
+                isMasked = 1
+                raceResult = weightedlist.pick(raceList)
+        else:
+                isMasked = 0
+        return(raceResult,isMasked)
 
 def pickgender():
 	return choice(['male', 'female'])
@@ -57,26 +42,8 @@ def pickgender():
 def pickage():
 	return choice(['young','mature','an adult','an elder','aged','fresh-faced','nubile','seasoned','inexperienced','youthful','settled','sophisticated','graceful'])
 
-#	if race == 'Dwarro':
-#		ageresult = randint(30, 200)
-#	elif race == 'Elvarin':
-#		ageresult = randint(10, 50)
-#	elif race == 'Huma':
-#		ageresult = randint(16, 80)
-#	elif race == 'Kyhrro':
-#		ageresult = randint(2, 5)
-#	elif race == 'Surrel':
-#		ageresult = randint(1, 4)
-#	elif race == 'Talar':
-#		ageresult = randint(15, 150)
-#	elif race == 'Thanae':
-#		ageresult = randint(16, 60)
-#	elif race == 'Zomai':
-#		ageresult = randint(3, 6)
-#	return(str(ageresult))
-
 def pickjob():
-	jobList = ['Bard','Cleric','Druid','Fighter','Paladin','Ranger','Thief','Wizard']
+	jobList = ['anchorite monk','apothecary','apprentice seer','apprentice wizard','hedge wizard','bailiff','barber','boatman','bodyguard','bondsman','bounty hunter','burgher','cadet','camp follower','cartographer','cenobite monk','bone picker','charcoal burner','chimneysweep','coachman','dilettante','drover','embalmer','entertainer','envoy','ex-convict','exciseman','farmer','ferryman','fieldwarden','fisherman','frogwife','gambler','grave robber','grave warden','hunter','jailer','knight errant','lamplighter','man-at-arms','marine','mediator','mercenary','messenger','militiaman','miner','minstrel','mystic','noble','outlaw','outrider','packmaster','peasant','penitent','pilgrim','pit fighter','prelate','raconteur','ratcatcher','river warden','roadwarden','rogue','scribe','scout','seaman','seer','servant','skald','skirmisher','smuggler','sneak','soldier','squire','stevedore','student','thief','thrall','thug','toll keeper','tradesman','vagabond','valet','watchman','whaler','wise man','woodsman','missionary','fighter','bard','cleric','druid','paladin','ranger','wizard']
 	return(choice(jobList))
 
 def pickappearance(job):
@@ -97,6 +64,7 @@ def pickknack():
 if __name__ == '__main__': # this will only execute if this is the main script, so it can be called by other fnxns
 #   get all of the variables together and stick them on the mannequin
 #	name = pickname()
+	isMasked = 0
 	gender = pickgender()
 	race, isMasked = pickrace()
 	age = pickage()
@@ -104,14 +72,10 @@ if __name__ == '__main__': # this will only execute if this is the main script, 
 	appearance = pickappearance(job)
 	instinct = pickinstinct()
 	knack = pickknack()
-	if sys.argv[1]: #this is how to get command line options
-		if sys.argv[1] == '-statblock' or sys.argv[1] == '-sb':
+	if len(sys.argv) >= 2: #this is how to get command line options
+		if sys.argv[1] == '-statblock' or sys.argv[1] == '-sb' or sys.argv[1] == '-stat':
 			print statblock()
 		elif sys.argv[1] == '-story' or sys.argv[1] == '-narrative' or sys.argv[1] == '-n':
 			print narrative()
 	else:
 		print statblock()
-#   do the usual clearing out
-	isMasked = 0
-
-
